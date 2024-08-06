@@ -8,10 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --background-color: #fff;
+            --yes-button-background-color: #9c9;
+            --no-button-background-color: #c99;
+        }
         body {
             font-family: "Roboto", sans-serif;
             font-size: 1em;
             font-weight: normal;
+            background-color: var(--background-color);
         }
         .situation-title {
             flex-grow: 1;
@@ -33,13 +39,21 @@
         .situation-options {
             display: flex;
             flex-direction: row;
+            gap: 6px;
         }
         .option-button {
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 1cm;
+            min-height: 44px;
+            border-radius: 6px;
+        }
+        .option-button.yes {
+            background-color: var(--yes-button-background-color);
+        }
+        .option-button.no {
+            background-color: var(--no-button-background-color);
         }
         .icon {
             font-family: "Noto Emoji", sans-serif;
