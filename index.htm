@@ -30,6 +30,7 @@
         .situation-block {
             display: flex;
             flex-direction: column;
+            gap: 4px;
         }
         .situation-description {
             display: flex;
@@ -41,6 +42,10 @@
             flex-direction: row;
             gap: 6px;
         }
+        .situation-chance-label {
+            font-size: 0.8em;
+            text-align: center;
+        }
         .option-button {
             flex-grow: 1;
             display: flex;
@@ -48,6 +53,25 @@
             justify-content: center;
             min-height: 44px;
             border-radius: 6px;
+        }
+        .option-chance {
+            flex: 0 0 3em;
+        }
+        .chance-svg {
+            display: block;
+            width: 3em;
+            height: 1.5em;
+        }
+        .chance-svg path {
+            fill: none;
+            stroke-width: 10;
+        }
+        .chance-svg text {
+            fill: #000;
+            stroke: #000;
+            font-size: 30px;
+            text-anchor: middle;
+            alignment-baseline: baseline;
         }
         .option-button.yes {
             background-color: var(--yes-button-background-color);
@@ -67,7 +91,12 @@
 
 </div>
 <script>
+    function arcColour(chance) {
+        return "hsl(" + chance * 90 + "deg 75% 50%)";
+    }
+
     function generateSituationBlock(situation) {
+
         const elSituation = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
         elSituation.setAttribute("id", situation.id + "-block");
         elSituation.classList.add("situation-block");
@@ -83,18 +112,40 @@
         const elSituationTitle = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
         elSituationTitle.innerHTML = situation.title;
         elSituationTitle.classList.add("situation-title");
-
         elSituationDescription.append(elSituationTitle);
-        const elSituationChance = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
-        elSituationChance.innerHTML = situation.icon;
-        elSituationChance.classList.add("icon");
 
+        const elSituationChance = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        elSituationChance.classList.add("option-chance");
+        const svgSituationChance = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svgSituationChance.classList.add("chance-svg");
+        svgSituationChance.setAttribute("viewBox", "0 0 110 60");
+
+        const svgChancePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        svgChancePath.setAttribute("d", "M 5 55 A 50 50 0 0 1 105 55");
+        svgChancePath.setAttribute("stroke", arcColour(situation.chance));
+        const fullArc = Math.ceil(50 * Math.PI);
+        const arcA = fullArc * situation.chance;
+        const arcB = fullArc - arcA;
+        svgChancePath.setAttribute("stroke-dasharray", arcA + " " + arcB);
+        svgSituationChance.appendChild(svgChancePath);
+
+        const svgChanceText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        svgChanceText.innerHTML = Math.round(100 * situation.chance) + "%";
+        svgChanceText.setAttribute("x", "55");
+        svgChanceText.setAttribute("y", "55");
+        svgSituationChance.appendChild(svgChanceText);
+
+        elSituationChance.append(svgSituationChance);
+        const elSituationChanceLabel = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        elSituationChanceLabel.classList.add("situation-chance-label");
+        elSituationChanceLabel.innerHTML = "chance";
+        elSituationChance.append(elSituationChanceLabel);
         elSituationDescription.append(elSituationChance);
 
         elSituation.append(elSituationDescription);
+
         const elSituationOptions = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
         elSituationOptions.classList.add("situation-options");
-
         for (let option of situation.options) {
             const elSituationOption = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
             elSituationOption.classList.add("option-button");
@@ -102,7 +153,6 @@
             elSituationOption.innerHTML = option.title;
             elSituationOptions.append(elSituationOption);
         }
-
         elSituation.append(elSituationOptions);
 
         return elSituation;
@@ -113,7 +163,7 @@
         title: "Ceasefire between UA & RU by 2025?",
         description: "Will there be a ceasefire between Ukraine and Russia by January 1st, 2025?",
         icon: '💣',
-        chance: 0.18,
+        chance: 0.17,
         options: [
             {
                 title: "Bet Yes",
