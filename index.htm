@@ -283,7 +283,29 @@
             },
         ]
     });
+    const exampleBlock2 = generateSituationBlock({
+        id: "ceasefire-UA-RU-2025-2",
+        title: "Ceasefire between UA & RU by 2025",
+        description: "Will there be a ceasefire between Ukraine and Russia by January 1st, 2025?",
+        icon: '💣',
+        chance: 0.17,
+        currentTotalBet: "$538.24m",
+        options: [
+            {
+                id: "yes",
+                title: "Bet Yes",
+                cssClass: "yes"
+            },
+            {
+                id: "no",
+                title: "Bet No",
+                cssClass: "no"
+            },
+        ]
+    });
+
     document.getElementById("content").append(exampleBlock);
+    document.getElementById("content").append(exampleBlock2);
 </script>
 </body>
 </html>
