@@ -10,6 +10,7 @@
     <style>
         :root {
             --background-color: #fff;
+            --hint-color: #999;
             --yes-button-background-color: #9c9;
             --no-button-background-color: #c99;
         }
@@ -39,8 +40,30 @@
         }
         .situation-options {
             display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: height 0.05s ease;
+            height: 100px; /* height:auto can't seem to be animated currently; search for calc-size(auto) for details */
+            overflow: hidden;
+        }
+        .situation-buttons {
+            display: flex;
             flex-direction: row;
             gap: 6px;
+        }
+        .situation-bet {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: height 0.05s ease;
+            height: 100px; /* height:auto can't seem to be animated currently; search for calc-size(auto) for details */
+            overflow: hidden;
+        }
+        .situation-inputs {
+            display: flex;
+            flex-direction: row;
+            gap: 6px;
+            height: 44px;
         }
         .situation-chance-label {
             font-size: 0.8em;
@@ -51,8 +74,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 44px;
+            height: 44px;
             border-radius: 6px;
+            color: #fff;
         }
         .option-chance {
             flex: 0 0 3em;
@@ -84,6 +108,21 @@
             font-size: 3em;
             font-weight: normal;
         }
+        .height-0 {
+            height: 0;
+        }
+        .situation-bet-field {
+            flex-grow: 1;
+            min-height: 44px;
+            border-radius: 6px;
+        }
+        .situation-bet-slider {
+            flex-grow: 1;
+            min-height: 44px;
+        }
+        .situation-total-bet {
+            color: var(--hint-color);
+        }
     </style>
 </head>
 <body>
@@ -91,6 +130,28 @@
 
 </div>
 <script>
+
+    function situationBetUIOn(situation, optionId) {
+        const elSituationOptions = document.getElementById(situation.id + "-options");
+        elSituationOptions.classList.add("height-0");
+        const elSituationBet = document.getElementById(situation.id + "-bet");
+        elSituationBet.classList.remove("height-0");
+        const option = situation.options.find(o => o.id === optionId);
+        const elSituationBetButton = document.getElementById(situation.id + "-bet-button");
+        const elButtonClone = elSituationBetButton.cloneNode(true);
+        elSituationBetButton.parentNode.replaceChild(elButtonClone, elSituationBetButton);
+        elButtonClone.className = "option-button " + option.cssClass;
+        elButtonClone.innerHTML = option.title;
+        elButtonClone.addEventListener("click", () => situationBetUIOff(situation));
+    }
+
+    function situationBetUIOff(situation) {
+        const elSituationOptions = document.getElementById(situation.id + "-options");
+        elSituationOptions.classList.remove("height-0");
+        const elSituationBet = document.getElementById(situation.id + "-bet");
+        elSituationBet.classList.add("height-0");
+    }
+
     function arcColour(chance) {
         return "hsl(" + chance * 90 + "deg 75% 50%)";
     }
@@ -146,30 +207,77 @@
 
         const elSituationOptions = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
         elSituationOptions.classList.add("situation-options");
+        elSituationOptions.setAttribute("id", situation.id + "-options");
+
+        const elSituationButtons = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        elSituationButtons.classList.add("situation-buttons");
+        elSituationButtons.setAttribute("id", situation.id + "-buttons");
         for (let option of situation.options) {
             const elSituationOption = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
             elSituationOption.classList.add("option-button");
             elSituationOption.classList.add(option.cssClass);
             elSituationOption.innerHTML = option.title;
-            elSituationOptions.append(elSituationOption);
+            elSituationOption.addEventListener("click", () => situationBetUIOn(situation, option.id));
+            elSituationButtons.append(elSituationOption);
         }
+        elSituationOptions.append(elSituationButtons);
+
+        const elSituationTotalBet = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        elSituationTotalBet.setAttribute("class", "situation-total-bet");
+        elSituationTotalBet.innerHTML = situation.currentTotalBet + " Bet";
+        elSituationOptions.append(elSituationTotalBet);
+
         elSituation.append(elSituationOptions);
+
+        const elSituationBet = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        elSituationBet.setAttribute("id", situation.id + "-bet");
+        elSituationBet.classList.add("situation-bet");
+        elSituationBet.classList.add("height-0");
+
+        const elSituationInputs = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        elSituationInputs.classList.add("situation-inputs");
+
+        const elSituationBetField = document.createElementNS("http://www.w3.org/1999/xhtml", "input");
+        elSituationBetField.setAttribute("id", situation.id + "-bet-field")
+        elSituationBetField.setAttribute("type", "number");
+        elSituationBetField.setAttribute("min", "0");
+        elSituationBetField.setAttribute("step", "1");
+        elSituationBetField.classList.add("situation-bet-field")
+        elSituationInputs.append(elSituationBetField);
+
+        const elSituationBetSlider = document.createElementNS("http://www.w3.org/1999/xhtml", "input");
+        elSituationBetSlider.setAttribute("id", situation.id + "-bet-slider");
+        elSituationBetSlider.setAttribute("type", "range");
+        elSituationBetSlider.classList.add("situation-bet-slider")
+        elSituationInputs.append(elSituationBetSlider);
+
+        elSituationBet.append(elSituationInputs);
+
+        const elSituationBetButton = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+        elSituationBetButton.setAttribute("id", situation.id + "-bet-button");
+        elSituationBetButton.classList.add("option-button");
+        elSituationBet.append(elSituationBetButton);
+
+        elSituation.append(elSituationBet);
 
         return elSituation;
     }
 
     const exampleBlock = generateSituationBlock({
         id: "ceasefire-UA-RU-2025",
-        title: "Ceasefire between UA & RU by 2025?",
+        title: "Ceasefire between UA & RU by 2025",
         description: "Will there be a ceasefire between Ukraine and Russia by January 1st, 2025?",
         icon: '💣',
         chance: 0.17,
+        currentTotalBet: "$538.24m",
         options: [
             {
+                id: "yes",
                 title: "Bet Yes",
                 cssClass: "yes"
             },
             {
+                id: "no",
                 title: "Bet No",
                 cssClass: "no"
             },
