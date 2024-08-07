@@ -263,49 +263,72 @@
         return elSituation;
     }
 
-    const exampleBlock = generateSituationBlock({
-        id: "ceasefire-UA-RU-2025",
-        title: "Ceasefire between UA & RU by 2025",
-        description: "Will there be a ceasefire between Ukraine and Russia by January 1st, 2025?",
-        icon: '💣',
-        chance: 0.17,
-        currentTotalBet: "$538.24m",
-        options: [
-            {
-                id: "yes",
-                title: "Bet Yes",
-                cssClass: "yes"
-            },
-            {
-                id: "no",
-                title: "Bet No",
-                cssClass: "no"
-            },
-        ]
-    });
-    const exampleBlock2 = generateSituationBlock({
-        id: "ceasefire-UA-RU-2025-2",
-        title: "Ceasefire between UA & RU by 2025",
-        description: "Will there be a ceasefire between Ukraine and Russia by January 1st, 2025?",
-        icon: '💣',
-        chance: 0.17,
-        currentTotalBet: "$538.24m",
-        options: [
-            {
-                id: "yes",
-                title: "Bet Yes",
-                cssClass: "yes"
-            },
-            {
-                id: "no",
-                title: "Bet No",
-                cssClass: "no"
-            },
-        ]
-    });
-
-    document.getElementById("content").append(exampleBlock);
-    document.getElementById("content").append(exampleBlock2);
+    const situations = [
+        {
+            id: "ceasefire-UA-RU-2025",
+            title: "Ceasefire between UA & RU by 2025",
+            description: "Will there be a ceasefire between Ukraine and Russia by January 1st, 2025?",
+            icon: '💣',
+            chance: 0.17,
+            currentTotalBet: "$538.24m",
+            options: [
+                {
+                    id: "yes",
+                    title: "Bet Yes",
+                    cssClass: "yes"
+                },
+                {
+                    id: "no",
+                    title: "Bet No",
+                    cssClass: "no"
+                },
+            ]
+        },
+        {
+            id: "trump-biden",
+            title: "Trump vs others",
+            description: "Will Trump win the 2024 elections?",
+            icon: '💣',
+            chance: 0.63,
+            currentTotalBet: "$315.85m",
+            options: [
+                {
+                    id: "yes",
+                    title: "Bet Yes",
+                    cssClass: "yes"
+                },
+                {
+                    id: "no",
+                    title: "Bet No",
+                    cssClass: "no"
+                },
+            ]
+        },
+        {
+            id: "ceasefire-Israel-HAMAS-2025",
+            title: "Ceasefire between Israel & HAMAS by 2025",
+            description: "Will there be a ceasefire between Ukraine and Russia by January 1st, 2025?",
+            icon: '💣',
+            chance: 0.39,
+            currentTotalBet: "$157.14m",
+            options: [
+                {
+                    id: "yes",
+                    title: "Bet Yes",
+                    cssClass: "yes"
+                },
+                {
+                    id: "no",
+                    title: "Bet No",
+                    cssClass: "no"
+                },
+            ]
+        }
+    ];
+    for (let s of situations) {
+        const elBlock = generateSituationBlock(s);
+        document.getElementById("content").append(elBlock);
+    }
 </script>
 </body>
 </html>
